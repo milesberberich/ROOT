@@ -17,4 +17,8 @@ The script have to be used in the following order:
    (neccessary input: results from 2. randomForest_newIndices)
    trains a random Forest to classify the forest into "clear", "deadwood" and "undisturbed".
    Its a very flexibel script, which can do oversampling and undersampling,
-   use different regions as an training and validation basis, use different bands and indices. 
+   use different regions as an training and validation basis, use different bands and indices.
+
+4. my_functions
+
+   A set of functions used for data handling. 
