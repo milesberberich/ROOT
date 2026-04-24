@@ -1,5 +1,33 @@
 import pandas as pd
 import rioxarray
+
+###############################################
+############ open_to_pd_df () ################
+###############################################
+
+# combining to_clean_pd_df() and open_with_labels()
+
+def open_to_pd_df(path):
+
+    da = rioxarray.open_rasterio(path)
+    if 'long_name' in da.attrs:
+        da = da.assign_coords(band=list(da.attrs['long_name']))
+
+    raster = da.drop_sel(band="std")  # not useful and NA most of the time
+    df = raster.stack(samples=("y", "x")).to_pandas().T.dropna().reset_index()
+    return df
+
+
+###############################################
+############ to_clean_pd_df () ################
+###############################################
+
+def to_clean_pd_df(x):
+
+    raster = x.drop_sel(band="std")  # not useful and NA most of the time
+    df = raster.stack(samples=("y", "x")).to_pandas().T.dropna().reset_index()
+    return df
+
 ###############################################
 ############ open_with_labels()################
 ###############################################
@@ -17,7 +45,7 @@ def open_with_labels(path): # small helper function, so the band labels dont get
 ###############################################
 
 
-def get_weighted_sample(df, total_n=30000, target_class=2, multiplier=2): # used to increase the performance on the in the unbalanced data set. The model gets exposed to more deadwood pixels.
+def get_weighted_sample(df, total_n=30000, target_class=2, multiplier=2): # used to increase the performance on the minority class in the unbalanced data set. The model gets trained on more deadwood pixels.
 
     prop = (df['trainclass'] == target_class).mean()
     n_target = int(total_n * prop * multiplier)
@@ -68,3 +96,4 @@ def balance_dataset(df_input, mode, target_number):
         return pd.concat(balanced_list).reset_index(drop=True)
 
     return df_input
+
