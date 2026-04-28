@@ -23,6 +23,7 @@ def randomForestClass(ntrees = 750, pred_train, forestclass_train):
         print("unbalanced scikit learn mode was used.")
 
     rf.fit(pred_train, forestclass_train)
+    return rf
 
 
 ###############################################
