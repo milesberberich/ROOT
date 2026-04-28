@@ -5,7 +5,7 @@ from sklearn.ensemble import RandomForestClassifier
 ##### randomForestClass () #######
 ###############################################
 
-def randomForestClass(ntrees = 750, pred_train = None, forestclass_train = None):
+def randomForestClass(ntrees = 750, pred_train = None, forestclass_train = None, FIT = "d"):
     """
     Handles class weights.
     """
@@ -13,7 +13,7 @@ def randomForestClass(ntrees = 750, pred_train = None, forestclass_train = None)
         rf = RandomForestClassifier(n_estimators=ntrees, class_weight="balanced_subsample", random_state=42)
         print("balanced scikit learn mode was used.")
 
-    else:
+    if FIT != "balanced":
         rf = RandomForestClassifier(n_estimators=ntrees, random_state=42)
         print("unbalanced scikit learn mode was used.")
 
