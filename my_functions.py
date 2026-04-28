@@ -15,12 +15,10 @@ def randomForestClass(ntrees = 750, pred_train, forestclass_train):
     Handles class weights.
     """
     if FIT == "balanced":
-
         rf = RandomForestClassifier(n_estimators=ntrees, class_weight="balanced_subsample", random_state=42)
         print("balanced scikit learn mode was used.")
 
     else:
-
         rf = RandomForestClassifier(n_estimators=ntrees, random_state=42)
         print("unbalanced scikit learn mode was used.")
 
