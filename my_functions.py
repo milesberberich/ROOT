@@ -3,6 +3,29 @@ from idlelib.pathbrowser import PathBrowser
 import pandas as pd
 import rioxarray
 from pathlib import Path
+from sklearn.ensemble import RandomForestClassifier
+
+
+###############################################
+##### randomForestClass () #######
+###############################################
+
+def randomForestClass(ntrees = 750, pred_train, forestclass_train):
+    """
+    Handles class weights.
+    """
+    if FIT == "balanced":
+
+        rf = RandomForestClassifier(n_estimators=ntrees, class_weight="balanced_subsample", random_state=42)
+        print("balanced scikit learn mode was used.")
+
+    else:
+
+        rf = RandomForestClassifier(n_estimators=ntrees, random_state=42)
+        print("unbalanced scikit learn mode was used.")
+
+    rf.fit(pred_train, forestclass_train)
+
 
 ###############################################
 ##### open_to_pd_df_withregionlabel () #######
