@@ -18,7 +18,8 @@ def open_to_pd_df_withregionlabels(path):
     df = raster.stack(samples=("y", "x")).to_pandas().T.dropna().reset_index()
 
     df["region"] = Path(path).stem
-    df["region_class"] = (df["region"].astype(str) + df['trainclass'].astype(str))
+    df["trainclass"] = (df["trainclass"] * 10000).round().astype(int)
+    df["region_class"] = (df["region"].astype(str) + "_" + df['trainclass'].astype(str))
     return df
 
 ###############################################
@@ -35,6 +36,7 @@ def open_to_pd_df(path):
 
     raster = da.drop_sel(band="std")  # not useful and NA most of the time
     df = raster.stack(samples=("y", "x")).to_pandas().T.dropna().reset_index()
+    df["trainclass"] = (df["trainclass"] * 10000).round().astype(int)
     return df
 
 
