@@ -1,24 +1,14 @@
-from idlelib.pathbrowser import PathBrowser
-
-import pandas as pd
-import rioxarray
-from pathlib import Path
-from sklearn.ensemble import RandomForestClassifier
-
-
-
 import pandas as pd
 import matplotlib.pyplot as plt
 
 
-def plot_model_results(y_true, y_pred, feature_importances, train_mode, val_mode, class_names=None):
+def plot_cross_model_results(y_true, y_pred, feature_importances, train_mode, val_mode, class_names=None):
     """
     Creates a combined dashboard showing Overall Accuracy,
     a Classification Report table, and Feature Importances.
     """
     from sklearn.metrics import classification_report, accuracy_score
 
-    # 1. Calculate Metrics
     overall_acc = accuracy_score(y_true, y_pred)
     report_dict = classification_report(y_true, y_pred, output_dict=True)
 
