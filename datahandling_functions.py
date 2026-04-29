@@ -1,4 +1,57 @@
 import pandas as pd
+
+###############################################
+############## rf_sample() ####################
+###############################################
+
+def rf_sample(df, method = none, total_n = 30000, weight = none, multiplier = none):
+
+    ###########################
+    if method == "weighted":
+
+        target_class = 2
+
+        prop = (df['trainclass'] == target_class).mean()
+        n_target = int(total_n * prop * multiplier)
+        n_target = min(n_target, (df['trainclass'] == target_class).sum())
+
+        # Sample both groups and combine
+        target_df = df[df['trainclass'] == target_class].sample(n_target)
+        others_df = df[df['trainclass'] != target_class].sample(total_n - n_target)
+
+        return pd.concat([target_df, others_df]).sample(frac=1)
+
+    ###########################
+    if method == "undersampling":
+
+        min_size = df["trainclass"].value_counts().min()
+        balanced_list = []
+        print("Through undersampling, the ration of regions can change!")
+        for class_id in df["trainclass"].unique():
+            class_subset = df[df["trainclass"] == class_id]
+            balanced_list.append(class_subset.sample(n=min_size, random_state=42))
+
+        return pd.concat(balanced_list).reset_index(drop=True)
+
+
+    ###########################
+    if method == "oversampling":
+
+        df_dead = df[df["trainclass"] == 2]
+        df_dead_os = df_dead.sample(oversampling_number, replace=True, random_state=42)
+        print("Through oversampling, the ration of regions can change!")
+        balanced_list = [df_dead_os]
+        for class_id in [1, 3]:
+            class_subset = df[df["trainclass"] == class_id]
+            replace_needed = len(class_subset) < oversampling_number
+            balanced_list.append(class_subset.sample(n=oversampling_number, replace=replace_needed, random_state=42))
+
+        return pd.concat(balanced_list).reset_index(drop=True)
+
+    else:
+        print("Please specify method.")
+
+
 ###############################################
 ############ get_weighted_sample()################
 ###############################################
@@ -22,14 +75,11 @@ def get_weighted_sample(df, total_n=30000, target_class=2, multiplier=2): # used
 ############ balance_dataset() ################
 ###############################################
 
-
-
 def balance_dataset(df_input, mode, target_number):
     """
     Balances a dataframe based on the BALANCE_MODE settings.
     """
     if mode == "OVERSAMPLING":
-        # Class 2 is Deadwood
         df_dead = df_input[df_input["trainclass"] == 2]
 
         # Sample with replacement to reach target_number
