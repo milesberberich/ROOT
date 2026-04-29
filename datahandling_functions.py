@@ -4,7 +4,7 @@ import pandas as pd
 ############## rf_sample() ####################
 ###############################################
 
-def rf_sample(df, method = none, total_n = 30000, weight = none, multiplier = none):
+def rf_sample(df, method = None, total_n = 30000, weight = None, multiplier = None):
 
     ###########################
     if method == "weighted":
@@ -12,7 +12,7 @@ def rf_sample(df, method = none, total_n = 30000, weight = none, multiplier = no
         target_class = 2
 
         prop = (df['trainclass'] == target_class).mean()
-        n_target = int(total_n * prop * multiplier)
+        n_target = int(total_n * prop * weight)
         n_target = min(n_target, (df['trainclass'] == target_class).sum())
 
         # Sample both groups and combine
