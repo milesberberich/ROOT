@@ -4,7 +4,7 @@ import pandas as pd
 ############## rf_sample() ####################
 ###############################################
 
-def rf_sample(df, method = None, total_n = 30000, weight = None, multiplier = None):
+def rf_sample(df, method = None, total_n = 50000, weight = None, oversampling_number = None):
 
     ###########################
     if method == "weighted":
