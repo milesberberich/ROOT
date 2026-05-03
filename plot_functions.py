@@ -3,6 +3,11 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, ConfusionMatrixDisplay
 
 
+
+###############################################
+############## plot_cross_model_results() ##############
+###############################################
+
 def plot_cross_model_results(y_true, y_pred, feature_importances, train_mode, val_mode, class_names=None):
     """
     Creates a dashboard showing Overall Accuracy, Metrics (P, R, F1),
@@ -51,6 +56,12 @@ def plot_cross_model_results(y_true, y_pred, feature_importances, train_mode, va
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
     return fig
 
+
+
+
+###############################################
+############## plot_model_results() ##############
+###############################################
 
 def plot_model_results(y_true, y_pred, rf_model, feature_names, train_mode, val_mode):
     """

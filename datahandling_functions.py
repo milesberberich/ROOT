@@ -3,33 +3,22 @@ import tifffile as tiff
 import numpy as np
 import rasterio
 from rasterio.transform import rowcol
+from pathlib import Path
 
 ###############################################
-############## map_prediction() ###############
-import pandas as pd
-import numpy as np
-import rasterio
-from rasterio.transform import rowcol
-from pathlib import Path
-
-
-import pandas as pd
-import numpy as np
-import rasterio
-from rasterio.transform import rowcol
-from pathlib import Path
+############## map_prediction() ##############
+###############################################
 
 def map_predictions(all_coordinates, cv_predictions, region_series, templates, output_dir):
     """
     Consolidated function to filter results by region and save multiple aligned TIFFs
     with the band named 'trainclass'.
     """
-    # 1. Combine all results into one internal DataFrame
+
     df_final = pd.DataFrame(all_coordinates, columns=['x', 'y'])
     df_final['pred'] = cv_predictions
     df_final['region'] = region_series.values
 
-    # 2. Iterate through the templates provided
     for region_name, template_path in templates.items():
         region_results = df_final[df_final['region'] == region_name]
 
@@ -37,32 +26,24 @@ def map_predictions(all_coordinates, cv_predictions, region_series, templates, o
             print(f"Skipping {region_name}: No results found for this region.")
             continue
 
-        # 3. Read metadata from the original template file
         with rasterio.open(template_path) as src:
             profile = src.profile
             transform = src.transform
             width, height = src.width, src.height
 
-        # 4. Prepare output metadata (1-band float32)[cite: 3]
         profile.update(dtype='float32', count=1, nodata=0, compress='lzw')
-
-        # 5. Create the empty grid and map coordinates to pixels[cite: 3]
         pixel_matrix = np.zeros((height, width), dtype='float32')
-
-        # rowcol handles center-to-corner alignment automatically[cite: 3]
         rows, cols = rowcol(transform, region_results['x'].values, region_results['y'].values)
 
-        # 6. Fill the matrix
         preds = region_results['pred'].values
         for r, c, p in zip(rows, cols, preds):
             if 0 <= r < height and 0 <= c < width:
                 pixel_matrix[r, c] = p
 
-        # 7. Write the file and set the band name
         out_path = Path(output_dir) / f"prediction_{region_name}.tif"
         with rasterio.open(out_path, 'w', **profile) as dst:
             dst.write(pixel_matrix, 1)
-            # SET BAND NAME HERE
+
             dst.set_band_description(1, 'trainclass')
 
         print(f"Successfully saved aligned raster for {region_name} at {out_path}")
