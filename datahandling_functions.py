@@ -13,24 +13,24 @@ from rasterio.transform import rowcol
 from pathlib import Path
 
 
+import pandas as pd
+import numpy as np
+import rasterio
+from rasterio.transform import rowcol
+from pathlib import Path
+
 def map_predictions(all_coordinates, cv_predictions, region_series, templates, output_dir):
     """
-    Consolidated function to filter results by region and save multiple aligned TIFFs.
-
-    all_coordinates: NumPy array of [x, y]
-    cv_predictions: NumPy array of model predictions
-    region_series: The 'region' column from your original training DataFrame
-    templates: Dictionary mapping region names to their original .tif paths
-    output_dir: String or Path where the result files should be saved
+    Consolidated function to filter results by region and save multiple aligned TIFFs
+    with the band named 'trainclass'.
     """
     # 1. Combine all results into one internal DataFrame
     df_final = pd.DataFrame(all_coordinates, columns=['x', 'y'])
     df_final['pred'] = cv_predictions
-    df_final['region'] = region_series.values  # Ensure it matches the index
+    df_final['region'] = region_series.values
 
     # 2. Iterate through the templates provided
     for region_name, template_path in templates.items():
-        # Filter results for just this specific region
         region_results = df_final[df_final['region'] == region_name]
 
         if region_results.empty:
@@ -58,10 +58,12 @@ def map_predictions(all_coordinates, cv_predictions, region_series, templates, o
             if 0 <= r < height and 0 <= c < width:
                 pixel_matrix[r, c] = p
 
-        # 7. Write the file
+        # 7. Write the file and set the band name
         out_path = Path(output_dir) / f"prediction_{region_name}.tif"
         with rasterio.open(out_path, 'w', **profile) as dst:
             dst.write(pixel_matrix, 1)
+            # SET BAND NAME HERE
+            dst.set_band_description(1, 'trainclass')
 
         print(f"Successfully saved aligned raster for {region_name} at {out_path}")
 
