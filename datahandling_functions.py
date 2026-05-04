@@ -6,6 +6,22 @@ from rasterio.transform import rowcol
 from pathlib import Path
 
 ###############################################
+############## overview_trainingdata() ##############
+###############################################
+
+def overview_trainingdata(pandas_series, count):
+
+    """
+    prints composition of first cross validation training split to confirm sampling
+    """
+    if count == 1:
+        print("Total class counts in first training data split:")
+        counts = pandas_series.value_counts()
+        print(counts)
+        print("Percentage of class counts in first training data split:")
+        print(counts/len(pandas_series)*100)
+
+###############################################
 ############## map_prediction() ##############
 ###############################################
 
